@@ -1,0 +1,19 @@
+{
+    "id": "f89d1da2-1ce4-4472-b925-44e8ee7e4563",
+    "version": "1.0.0",
+    "platform": "all",
+    "arch": "all",
+    "name": "Metadata Viewer",
+    "logo": "/logo.png",
+    "keywords": [],
+    "devTools": true,
+    "preview": {
+        "jpg,png,webp": {
+            "inspector": {
+                "path": "index.html",
+                "height": 100,
+                "multiSelect": false
+            }
+        }
+    }
+}
