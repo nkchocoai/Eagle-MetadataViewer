@@ -6,7 +6,7 @@
     "name": "Metadata Viewer",
     "logo": "/logo.png",
     "keywords": [],
-    "devTools": true,
+    "devTools": false,
     "main": {
         "url": "main.html",
         "width": 640,
