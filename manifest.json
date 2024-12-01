@@ -7,6 +7,11 @@
     "logo": "/logo.png",
     "keywords": [],
     "devTools": true,
+    "main": {
+        "url": "main.html",
+        "width": 640,
+        "height": 480
+    },
     "preview": {
         "jpg,png,webp": {
             "inspector": {

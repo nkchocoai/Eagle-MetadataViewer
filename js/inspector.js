@@ -1,4 +1,3 @@
-// Listen to plugin creation
 eagle.onPluginCreate(async (plugin) => {
 
     // Get the current theme
@@ -11,6 +10,7 @@ eagle.onPluginCreate(async (plugin) => {
 
 
     const positivePrompt = document.getElementById("metadata");
+
     positivePrompt.innerText = await getParameters(item);
 });
 
