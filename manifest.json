@@ -10,7 +10,7 @@
     "preview": {
         "jpg,png,webp": {
             "inspector": {
-                "path": "index.html",
+                "path": "inspector.html",
                 "height": 100,
                 "multiSelect": false
             }
