@@ -11,24 +11,27 @@ eagle.onPluginCreate(async (plugin) => {
 
 
     const positivePrompt = document.getElementById("positive_prompt");
-
-    if (item.ext == "png") {
-        const sharp = require("sharp");
-
-        const metadata = await sharp(item.filePath).metadata();
-        const params = metadata.comments.find((comment) => comment.keyword == "parameters");
-        positivePrompt.innerText = params.text;
-    } else {
-        const ExifReader = require("exifreader");
-        const iconv = require("iconv-lite");
-
-        const tags = await ExifReader.load(item.filePath);
-        const exifString = iconv.decode(tags['UserComment'].value.slice(8), "utf-16");
-        positivePrompt.innerText = exifString;
-    }
+    positivePrompt.innerText = await getParameters(item);
 });
 
 // Listen to theme changes
 eagle.onThemeChanged((theme) => {
     document.body.setAttribute('theme', theme);
 });
+
+async function getParameters(item) {
+    if (item.ext == "png") {
+        const sharp = require("sharp");
+
+        const metadata = await sharp(item.filePath).metadata();
+        const params = metadata.comments.find((comment) => comment.keyword == "parameters");
+        return params.text;
+    } else {
+        const ExifReader = require("exifreader");
+        const iconv = require("iconv-lite");
+
+        const tags = await ExifReader.load(item.filePath);
+        const exifString = iconv.decode(tags['UserComment'].value.slice(8), "utf-16");
+        return exifString;
+    }
+}
