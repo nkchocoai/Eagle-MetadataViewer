@@ -10,7 +10,7 @@ eagle.onPluginCreate(async (plugin) => {
     const item = selected[0];
 
 
-    const positivePrompt = document.getElementById("positive_prompt");
+    const positivePrompt = document.getElementById("metadata");
     positivePrompt.innerText = await getParameters(item);
 });
 
