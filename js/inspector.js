@@ -11,7 +11,11 @@ eagle.onPluginCreate(async (plugin) => {
     const positivePrompt = document.getElementById("metadata");
 
     const { getParameters } = require(`${__dirname}/js/utils`);
-    positivePrompt.innerText = await getParameters(item);
+    try {
+        positivePrompt.innerText = await getParameters(item);
+    } catch {
+        positivePrompt.innerText = "Failed to retrieve metadata.";
+    }
 });
 
 // Listen to theme changes
