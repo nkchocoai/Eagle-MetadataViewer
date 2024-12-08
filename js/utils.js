@@ -163,7 +163,5 @@ function tokenWeights(string, currentWeight) {
 function isGarbled(str) {
     const garbledPattern = /[^\w\sぁ-んァ-ン一-龥。、・ー -/:-@\[-\`\{-\~']/g;
     const garbledMatch = str.match(garbledPattern);
-    console.log(garbledMatch);
-    console.log(str.length);
     return garbledMatch && garbledMatch.length > str.length * 0.2;
 }
