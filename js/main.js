@@ -12,7 +12,6 @@ eagle.onPluginCreate(async (plugin) => {
         for (let item of selected) {
             const parameters = await getParameters(item);
             const parsedParameters = parse(parameters);
-            console.log(parsedParameters);
             let outputParameters = [];
             if (checkboxPositive.checked) {
                 outputParameters.push(parsedParameters["Positive"]);
@@ -25,6 +24,28 @@ eagle.onPluginCreate(async (plugin) => {
             }
 
             item.annotation = outputParameters.join("\n");
+            await item.save();
+        }
+    });
+
+    document.getElementById("send-to-tags").addEventListener("click", async function (e) {
+        const selected = await eagle.item.getSelected();
+
+        const textareaReplace = document.getElementById("textarea-replace");
+        for (let item of selected) {
+            const parameters = await getParameters(item);
+            const parsedParameters = parse(parameters);
+
+            let tags = parseTags(parsedParameters["Positive"]);
+            let replacedTags = [];
+            for (let tag of tags) {
+                for (let line of textareaReplace.value.split(/\r\n|\n/)) {
+                    const [pattern, replacement] = line.split(",");
+                    tag = tag.replaceAll(pattern, replacement);
+                }
+                replacedTags.push(tag);
+            }
+            item.tags = replacedTags;
             await item.save();
         }
     });
@@ -88,4 +109,98 @@ function parse(parameters) {
     }
 
     return settingDict;
+}
+
+// refer. https://github.com/comfyanonymous/ComfyUI/blob/8e4118c0de2c23098db4601fc25a4bd55868d82b/comfy/sd1_clip.py#L243-L289
+function parseParentheses(string) {
+    let result = [];
+    let currentItem = "";
+    let nestingLevel = 0;
+
+    for (let char of string) {
+        if (char === "(") {
+            if (nestingLevel === 0) {
+                if (currentItem) {
+                    result.push(currentItem);
+                    currentItem = "(";
+                } else {
+                    currentItem = "(";
+                }
+            } else {
+                currentItem += char;
+            }
+            nestingLevel++;
+        } else if (char === ")") {
+            nestingLevel--;
+            if (nestingLevel === 0) {
+                result.push(currentItem + ")");
+                currentItem = "";
+            } else {
+                currentItem += char;
+            }
+        } else {
+            currentItem += char;
+        }
+    }
+
+    if (currentItem) {
+        result.push(currentItem);
+    }
+
+    return result;
+}
+
+function tokenWeights(string, currentWeight) {
+    let parts = parseParentheses(string);
+    let output = [];
+
+    for (let part of parts) {
+        let weight = currentWeight;
+
+        // Check if part is wrapped in parentheses
+        if (part.length >= 2 && part.startsWith("(") && part.endsWith(")")) {
+            part = part.slice(1, -1);
+            let colonIndex = part.lastIndexOf(":");
+
+            // Adjust weight
+            weight *= 1.1;
+
+            if (colonIndex > 0) {
+                try {
+                    weight = parseFloat(part.slice(colonIndex + 1));
+                    part = part.slice(0, colonIndex);
+                } catch (e) {
+                    // Ignore errors and use the adjusted weight
+                }
+            }
+
+            // Recursively process nested content
+            output = output.concat(tokenWeights(part, weight));
+        } else {
+            output.push([part, currentWeight]);
+        }
+    }
+
+    return output;
+}
+
+function parseTags(text) {
+    text = text.replaceAll("\\(", "{[{[");
+    text = text.replaceAll("\\)", "}]}]");
+
+    let weights = tokenWeights(text, 1.0);
+    let tags = [];
+
+    weights.forEach(([t]) => {
+        t.split(",").forEach(tag => {
+            tag = tag.trim();
+            if (tag) {
+                tag = tag.replaceAll("{[{[", "\\(");
+                tag = tag.replaceAll("}]}]", "\\)");
+                tags.push(tag);
+            }
+        });
+    });
+
+    return tags;
 }
