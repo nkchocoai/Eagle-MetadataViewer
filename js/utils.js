@@ -18,6 +18,9 @@ module.exports = class {
 
             const tags = await ExifReader.load(item.filePath);
             let exifString = iconv.decode(tags['UserComment'].value.slice(8), "utf-16");
+            if (isGarbled(exifString)) {
+                exifString = iconv.decode(tags['UserComment'].value.slice(8), "utf-8");
+            }
             return exifString;
         }
     }
@@ -155,4 +158,12 @@ function tokenWeights(string, currentWeight) {
     }
 
     return output;
+}
+
+function isGarbled(str) {
+    const garbledPattern = /[^\w\sぁ-んァ-ン一-龥。、・ー -/:-@\[-\`\{-\~']/g;
+    const garbledMatch = str.match(garbledPattern);
+    console.log(garbledMatch);
+    console.log(str.length);
+    return garbledMatch && garbledMatch.length > str.length * 0.2;
 }
