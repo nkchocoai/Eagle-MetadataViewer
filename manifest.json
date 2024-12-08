@@ -9,8 +9,8 @@
     "devTools": false,
     "main": {
         "url": "main.html",
-        "width": 640,
-        "height": 480
+        "width": 300,
+        "height": 400
     },
     "preview": {
         "jpg,png,webp": {
