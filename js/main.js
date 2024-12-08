@@ -33,6 +33,7 @@ eagle.onPluginCreate(async (plugin) => {
         const selected = await eagle.item.getSelected();
 
         const textareaReplace = document.getElementById("textarea-replace");
+        const checkboxToLower = document.getElementById("checkbox-to-lower");
         for (let item of selected) {
             const parameters = await getParameters(item);
             const parsedParameters = parse(parameters);
@@ -43,6 +44,9 @@ eagle.onPluginCreate(async (plugin) => {
                 for (let line of textareaReplace.value.split(/\r\n|\n/)) {
                     const [pattern, replacement] = line.split(",");
                     tag = tag.replaceAll(pattern, replacement);
+                }
+                if (checkboxToLower.checked) {
+                    tag = tag.toLowerCase();
                 }
                 replacedTags.push(tag);
             }

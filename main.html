@@ -33,11 +33,15 @@
         <fieldset>
             <legend>Positive Prompt to be output to tags :</legend>
             <div>
-                <label for="textarea-replace"></label>
+                <label for="textarea-replace">Replace list(&lt;oldStr&gt;,&lt;newStr&gt;)</label><br>
                 <textarea name="textarea-replace" id="textarea-replace" rows="5" cols="40">
 \(,(
 \),)
 _, </textarea>
+            </div>
+            <div>
+                <input type="checkbox" id="checkbox-to-lower" name="checkbox-to-lower" checked />
+                <label for="checkbox-to-lower">To lower (e.g., "Masterpiece" -> "masterpiece")</label>
             </div>
         </fieldset>
         <button id="send-to-tags">Send to tags</button>
